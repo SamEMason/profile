@@ -15,13 +15,6 @@
     "format:check": "prettier --check .",
     "prepare": "husky"
   },
-  "lint-staged": {
-    "*.{js,mjs,cjs,ts,tsx,mts,cts}": [
-      "eslint --fix --no-warn-ignored",
-      "prettier --write --ignore-unknown"
-    ],
-    "*.{json,md,css,yml,yaml}": "prettier --write --ignore-unknown"
-  },
   "license": "ISC",
   "devEngines": {
     "runtime": {

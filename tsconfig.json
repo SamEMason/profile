@@ -9,5 +9,5 @@
     "types": ["node"],
     "noEmit": true
   },
-  "include": ["src", "tests", "eslint.config.ts"]
+  "include": ["src", "tests", "config", "eslint.config.ts"]
 }
