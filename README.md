@@ -10,12 +10,17 @@ The first version captures software development experience through a coding-agen
 
 ## Development
 
-Requires Node 22+ and pnpm.
+Requires pnpm. The project pins Node 24, and pnpm downloads it automatically.
 
 ```sh
 pnpm install
-pnpm dev        # run with reload on save
-pnpm typecheck  # type-check
-pnpm build      # compile to dist/
-pnpm start      # run the compiled output
+pnpm dev           # run with reload on save
+pnpm test          # run tests
+pnpm typecheck     # type-check
+pnpm lint          # ESLint
+pnpm format        # Prettier (format:check to only check)
+pnpm build         # compile to dist/
+pnpm start         # run the compiled output
 ```
+
+A pre-commit hook lints and formats staged files, then runs the typecheck and tests.
