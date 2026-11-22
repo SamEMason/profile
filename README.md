@@ -12,11 +12,13 @@ See the [development plan](docs/profile-development-plan.md) for the architectur
 
 ## Development
 
-Requires pnpm. The project pins Node 24, and pnpm downloads it automatically.
+Requires pnpm and Docker with Compose (for example via Colima). The project pins Node 24, and pnpm downloads it automatically.
 
 ```sh
+cp .env.example .env   # then set a real POSTGRES_PASSWORD
 pnpm install
-pnpm dev           # run with reload on save
+pnpm dev           # start Postgres, then run with reload on save
+docker compose down  # stop Postgres (data is kept)
 pnpm test          # run tests
 pnpm typecheck     # type-check
 pnpm lint          # ESLint

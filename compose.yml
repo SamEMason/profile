@@ -1,0 +1,25 @@
+name: profile
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+    ports:
+      # Only reachable from this machine, not the local network.
+      - "127.0.0.1:5432:5432"
+    volumes:
+      # Real Profile data. Postgres 18+ images expect the mount at /var/lib/postgresql.
+      - profile-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    # Give Postgres time for a clean shutdown.
+    stop_grace_period: 30s
+
+volumes:
+  profile-data:

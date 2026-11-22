@@ -43,11 +43,12 @@ Remove the aliases once typescript-eslint supports TS 7.1+. The remaining peer w
 - `docs/`: project documents, such as the development plan.
 - `tests/`: Vitest tests (`*.test.ts`).
 - `config/`: tooling config (`lint-staged.ts`).
-- `tsconfig.json`: type-checking only (`noEmit`). Covers `src`, `tests`, `config` and `eslint.config.ts`.
+- `scripts/`: dev scripts run with tsx (`dev.ts`: starts Postgres, then the app).
+- `tsconfig.json`: type-checking only (`noEmit`). Covers `src`, `tests`, `config`, `scripts` and `eslint.config.ts`.
 
 ## Commands
 
-- `pnpm dev`: run `src/index.ts` with tsx, restarting on save (no type-checking)
+- `pnpm dev`: start the Postgres container (waiting until it's healthy), then run `src/index.ts` with tsx, restarting on save (no type-checking). `docker compose down` stops the database and keeps its data.
 - `pnpm test`: run tests once
 - `pnpm typecheck`: type-check everything
 - `pnpm lint`: ESLint
