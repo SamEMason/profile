@@ -2,8 +2,9 @@ import { randomUUID } from "node:crypto";
 import { afterAll, beforeEach, describe, expect, inject, it } from "vitest";
 import { connectDatabase } from "../../src/db/client.js";
 import { experience, profile } from "../../src/db/schema.js";
-import { ValidationError } from "../../src/domain/errors.js";
+import { NotFoundError, ValidationError } from "../../src/domain/errors.js";
 import {
+  getExperience,
   listExperiences,
   saveExperience,
 } from "../../src/services/experience.js";
@@ -103,5 +104,41 @@ describe("listExperiences", () => {
     const listed = await listExperiences(db, profileId);
 
     expect(listed.map((e) => e.description)).toEqual([input.description]);
+  });
+});
+
+describe("getExperience", () => {
+  it("returns the experience with that id", async () => {
+    const { id: profileId } = await resolveProfile(db);
+    const saved = await saveExperience(db, profileId, input);
+
+    expect(await getExperience(db, profileId, saved.id)).toEqual(saved);
+  });
+
+  it("throws NotFoundError for an unknown id", async () => {
+    const { id: profileId } = await resolveProfile(db);
+
+    await expect(
+      getExperience(db, profileId, randomUUID()),
+    ).rejects.toBeInstanceOf(NotFoundError);
+  });
+
+  it("throws NotFoundError for an id that isn't a UUID", async () => {
+    const { id: profileId } = await resolveProfile(db);
+
+    await expect(
+      getExperience(db, profileId, "not-a-uuid"),
+    ).rejects.toBeInstanceOf(NotFoundError);
+  });
+
+  it("throws NotFoundError for another profile's experience", async () => {
+    const { id: profileId } = await resolveProfile(db);
+    const [other] = await db.insert(profile).values({}).returning();
+    if (!other) throw new Error("Creating the other profile returned no row.");
+    const theirs = await saveExperience(db, other.id, input);
+
+    await expect(
+      getExperience(db, profileId, theirs.id),
+    ).rejects.toBeInstanceOf(NotFoundError);
   });
 });

@@ -18,3 +18,17 @@ export class ValidationError extends Error {
     this.issues = error.issues;
   }
 }
+
+/**
+ * Thrown when a record doesn't exist, or belongs to a different profile.
+ * Both cases look the same, so callers can't learn about other profiles' records.
+ */
+export class NotFoundError extends Error {
+  /**
+   * @param message - What wasn't found, e.g. `No experience with id "…".`
+   */
+  constructor(message: string) {
+    super(message);
+    this.name = "NotFoundError";
+  }
+}

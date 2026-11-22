@@ -1,7 +1,8 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
+import * as z from "zod";
 import type { Database } from "../db/client.js";
 import { experience } from "../db/schema.js";
-import { ValidationError } from "../domain/errors.js";
+import { NotFoundError, ValidationError } from "../domain/errors.js";
 import { NewExperience, type Experience } from "../domain/experience.js";
 
 /**
@@ -51,3 +52,33 @@ export const listExperiences = async (
     .from(experience)
     .where(eq(experience.profileId, profileId))
     .orderBy(desc(experience.createdAt));
+
+/**
+ * Gets one of a profile's experiences by its id.
+ *
+ * An id that isn't a UUID can't match anything, so it's treated as not found
+ * rather than passed to Postgres, which would reject it with a confusing error.
+ *
+ * @param db - The open database connection.
+ * @param profileId - The profile the experience must belong to.
+ * @param id - The experience's id, e.g. `"3f9c…"`.
+ * @returns The experience.
+ * @throws {NotFoundError} If no experience with that id belongs to the profile.
+ */
+export const getExperience = async (
+  db: Database,
+  profileId: string,
+  id: string,
+): Promise<Experience> => {
+  const isUuid = z.uuid().safeParse(id).success;
+
+  const [found] = isUuid
+    ? await db
+        .select()
+        .from(experience)
+        .where(and(eq(experience.id, id), eq(experience.profileId, profileId)))
+    : [];
+
+  if (!found) throw new NotFoundError(`No experience with id "${id}".`);
+  return found;
+};
