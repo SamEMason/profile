@@ -1,14 +1,21 @@
-import * as z from "zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-orm/zod";
+import type * as z from "zod";
+import { experience } from "../db/schema.js";
 
-/** A single captured experience. */
-export const Experience = z.object({
-  id: z.string(),
-  profileId: z.string(),
-  description: z.string(),
-  skills: z.array(z.string()),
-  project: z.string(),
-  source: z.string(),
-  createdAt: z.date(),
-});
+/** An experience as stored, derived from the `experience` table. */
+export const Experience = createSelectSchema(experience);
 
 export type Experience = z.infer<typeof Experience>;
+
+/**
+ * What a caller (such as the MCP tool) provides to save an experience.
+ * The database fills in `id` and `createdAt`, and the service sets `profileId`,
+ * so callers can't supply them.
+ */
+export const NewExperience = createInsertSchema(experience).omit({
+  id: true,
+  profileId: true,
+  createdAt: true,
+});
+
+export type NewExperience = z.infer<typeof NewExperience>;

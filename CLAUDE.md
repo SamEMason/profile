@@ -41,7 +41,7 @@ Remove the aliases once typescript-eslint supports TS 7.1+. The remaining peer w
   - `src/config.ts`: app settings (for example the database connection timeout). Tooling config lives in `config/` instead, which isn't part of the build.
   - `src/db/client.ts`: `connectDatabase(url)`, the shared Postgres connection for services.
   - `src/db/schema.ts`: Drizzle table definitions, the source of truth for the data shape (`snakeCase` tables: camelCase in TS, snake_case columns).
-  - `src/domain/`: zod schemas and their inferred types (`Experience`, `Profile`).
+  - `src/domain/`: zod schemas derived from the tables with `drizzle-orm/zod` (`Experience`, `NewExperience`, `Profile`), plus their inferred types. Don't hand-write shapes here; change the table instead.
 - `docs/`: project documents, such as the development plan.
 - `tests/`: Vitest tests (`*.test.ts`).
 - `config/`: tooling config (`lint-staged.ts`, `drizzle.ts` for drizzle-kit).
