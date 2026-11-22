@@ -11,6 +11,8 @@
     "dev": "tsx scripts/dev.ts",
     "db:generate": "drizzle-kit generate --config=config/drizzle.ts",
     "db:migrate": "drizzle-kit migrate --config=config/drizzle.ts",
+    "db:studio": "drizzle-kit studio --config=config/drizzle.ts",
+    "db:psql": "docker compose exec db sh -c 'psql -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\"'",
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier --write .",
