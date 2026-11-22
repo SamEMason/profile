@@ -1,8 +1,8 @@
-import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import type { TestProject } from "vitest/node";
 import { testDatabase } from "../../config/vitest-db.js";
+import { runCompose } from "../../scripts/lib/compose.js";
 import { connectDatabase } from "../../src/db/client.js";
 
 /** The test database's compose file, resolved from this file so it works from any folder. */
@@ -16,15 +16,13 @@ const MIGRATIONS_FOLDER = fileURLToPath(
 );
 
 /**
- * Runs a Docker Compose command against compose.test.yml, capturing its output.
+ * Runs a Docker Compose command against compose.test.yml.
  *
  * @param args - Compose arguments, e.g. `["up", "-d", "--wait"]`.
  * @throws If Docker can't be run, or the command fails (with Docker's output and a hint).
  */
-const runCompose = (args: string[]): void => {
-  const result = spawnSync("docker", ["compose", "-f", COMPOSE_FILE, ...args], {
-    encoding: "utf8",
-  });
+const runTestCompose = (args: string[]): void => {
+  const result = runCompose(["-f", COMPOSE_FILE, ...args]);
 
   if (result.error) {
     throw new Error(
@@ -32,7 +30,7 @@ const runCompose = (args: string[]): void => {
       { cause: result.error },
     );
   }
-  if (result.status !== 0) {
+  if (!result.ok) {
     throw new Error(
       `docker compose ${args.join(" ")} failed. Is Colima running? Is port 5433 free?\n\n${result.stdout}${result.stderr}`,
     );
@@ -41,7 +39,7 @@ const runCompose = (args: string[]): void => {
 
 /** Removes the test database's container and network, along with its in-memory data. */
 const removeTestDatabase = (): void => {
-  runCompose(["down", "-v"]);
+  runTestCompose(["down", "-v"]);
 };
 
 /** Leaves the test database running and prints how to inspect and remove it. */
@@ -77,7 +75,7 @@ const migrateTestDatabase = async (): Promise<void> => {
 const setup = async (project: TestProject): Promise<() => void> => {
   // Start clean, even if an interrupted or kept run left a container behind.
   removeTestDatabase();
-  runCompose(["up", "-d", "--wait"]);
+  runTestCompose(["up", "-d", "--wait"]);
 
   try {
     await migrateTestDatabase();

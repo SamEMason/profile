@@ -53,6 +53,7 @@ Remove the aliases once typescript-eslint supports TS 7.1+. The remaining peer w
 - `scripts/`: dev scripts run with tsx.
   - `dev.ts` starts Postgres, then the app.
   - `check-migrations.ts` runs a drizzle-kit dry run to catch schema changes without a migration.
+  - `lib/`: helpers shared by scripts and tests, not run directly. `compose.ts` has `runCompose(args)`, which runs `docker compose` and returns the result without printing or throwing.
 - `tsconfig.json`: type-checking only (`noEmit`). Covers `src`, `tests`, `config`, `scripts` and `eslint.config.ts`.
 
 ## Commands

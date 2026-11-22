@@ -1,5 +1,6 @@
-import { spawn, spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { styleText } from "node:util";
+import { runCompose } from "./lib/compose.js";
 
 /** The word "profile" in block letters, shown at the top of `pnpm dev`. */
 const WORDMARK: readonly string[] = [
@@ -54,10 +55,8 @@ const printHeader = (): void => {
  * @returns The address, e.g. `"127.0.0.1:5432"`, or `undefined` if it can't be read.
  */
 const databaseAddress = (): string | undefined => {
-  const result = spawnSync("docker", ["compose", "port", "db", "5432"], {
-    encoding: "utf8",
-  });
-  const address = result.status === 0 ? result.stdout.trim() : "";
+  const result = runCompose(["port", "db", "5432"]);
+  const address = result.ok ? result.stdout.trim() : "";
   return address || undefined;
 };
 
@@ -95,9 +94,7 @@ const startDatabase = (): void => {
   }
 
   const startedAt = performance.now();
-  const result = spawnSync("docker", ["compose", "up", "-d", "--wait"], {
-    encoding: "utf8",
-  });
+  const result = runCompose(["up", "-d", "--wait"]);
   const seconds = ((performance.now() - startedAt) / 1000).toFixed(1);
 
   // Clear the "starting…" line so the result replaces it.
@@ -109,7 +106,7 @@ const startDatabase = (): void => {
       "Is Docker (Colima) installed and on your PATH?",
     );
   }
-  if (result.status !== 0) {
+  if (!result.ok) {
     failDatabase(
       "failed to start",
       "Is Colima running? Is port 5432 free?",
