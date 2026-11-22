@@ -10,7 +10,7 @@ export type Experience = z.infer<typeof Experience>;
 /**
  * What a caller (such as the MCP tool) provides to save an experience.
  *
- * - The database fills in `id` and `createdAt`, and the service sets
+ * - The database fills in `id`, `createdAt` and `updatedAt`, and the service sets
  *   `profileId`, so callers can't supply them.
  * - Text fields must be non-empty after trimming, and `skills` needs at least one item.
  * - Unknown keys are rejected rather than silently dropped, so a field the
@@ -22,7 +22,8 @@ export const NewExperience = z.strictObject(
     skills: (schema) => schema.min(1),
     project: (schema) => schema.trim().min(1),
     source: (schema) => schema.trim().min(1),
-  }).omit({ id: true, profileId: true, createdAt: true }).shape,
+  }).omit({ id: true, profileId: true, createdAt: true, updatedAt: true })
+    .shape,
 );
 
 export type NewExperience = z.infer<typeof NewExperience>;

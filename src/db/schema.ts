@@ -23,4 +23,9 @@ export const experience = snakeCase.table("experience", {
   project: text().notNull(),
   source: text().notNull(),
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  /** Set to now on insert, and on every update made through Drizzle. */
+  updatedAt: timestamp({ withTimezone: true })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });

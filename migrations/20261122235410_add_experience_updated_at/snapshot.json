@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "10",
+  "dialect": "postgres",
+  "id": "0d30b370-d078-45f9-9426-606e2eaee964",
+  "prevIds": [
+    "c7349cfd-e953-4a56-913a-37b0a09c1612"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "experience",
+        "updated_at"
+      ],
+      "writes": [
+        "s|col|public.experience.updated_at",
+        "n|col|public.experience.updated_at",
+        "e|col|public.experience.updated_at"
+      ],
+      "reads": [
+        "n|tbl|public.experience",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "experience",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}
