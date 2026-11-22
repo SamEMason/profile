@@ -1,19 +1,29 @@
 # Profile
 
-A structured, persistent source of truth for a person's experiences. The first version captures software development experience through a coding-agent skill and saves it via MCP tools. The scope is capture only: no résumés, portfolios or other consumption yet.
+A structured, persistent source of truth for a person's experiences. The first version captures software development experience through coding-agent skills, both ongoing (after a piece of work) and retrospective (from existing repos), and saves approved records through an MCP server into PostgreSQL. The scope is capture only: no résumés, portfolios or other consumption yet.
+
+The plan, including phases and the first milestone, is in `docs/profile-development-plan.md`.
 
 ## How we work
 
-This project is augmented manual programming: the user writes and directs the code.
+This project is augmented manual programming: Claude does most of the implementation, while the user keeps architectural direction and understanding.
 
-- Don't generate code, scaffold or run multi-step work unless asked. Do exactly what was requested.
-- Help by explaining, looking up docs, reviewing and debugging. Offer sketches; don't write files unprompted.
+1. Discuss the intended behavior and design.
+2. Claude implements a small, reviewable change.
+3. The user inspects the code and questions unfamiliar decisions.
+4. Refine or refactor as needed.
+5. Claude writes and runs appropriate tests.
+6. The user reviews and commits.
+
+- Do what was asked, one small change at a time. Don't run ahead into the next step.
 - Challenge assumptions and keep scope small. No process or infrastructure for its own sake.
 
 ## Stack
 
 - Node 24, pinned with pnpm's `devEngines.runtime`. pnpm downloads it and uses it for every `pnpm` command and the git hook. Plain `node` in the shell may be a different version.
 - pnpm 12, ESM, TypeScript, Vitest, ESLint, Prettier, Husky with lint-staged.
+- zod for domain schemas.
+- Persistence (planned): PostgreSQL in Docker Compose, with version-controlled migrations and a separate test database.
 - `module: nodenext`: relative imports use `.js` extensions in `.ts` files.
 
 ### TypeScript 6/7 workaround
@@ -28,6 +38,9 @@ Remove the aliases once typescript-eslint supports TS 7.1+. The remaining peer w
 ## Layout
 
 - `src/`: application code, compiled to `dist/` by `tsconfig.build.json`.
+  - `src/domain/`: zod schemas and their inferred types (`Experience`, `Profile`).
+  - `src/lib/`: small helpers (`newId`, `now`).
+- `docs/`: project documents, such as the development plan.
 - `tests/`: Vitest tests (`*.test.ts`).
 - `config/`: tooling config (`lint-staged.ts`).
 - `tsconfig.json`: type-checking only (`noEmit`). Covers `src`, `tests`, `config` and `eslint.config.ts`.
