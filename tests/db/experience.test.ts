@@ -1,9 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeEach, describe, expect, inject, it } from "vitest";
 import { connectDatabase } from "../../src/db/client.js";
-import { experience } from "../../src/db/schema.js";
+import { experience, profile } from "../../src/db/schema.js";
 import { ValidationError } from "../../src/domain/errors.js";
-import { saveExperience } from "../../src/services/experience.js";
+import {
+  listExperiences,
+  saveExperience,
+} from "../../src/services/experience.js";
 import { resolveProfile } from "../../src/services/profile.js";
 import { resetDatabase } from "./reset.js";
 
@@ -58,5 +61,47 @@ describe("saveExperience", () => {
 
   it("fails for an unknown profile", async () => {
     await expect(saveExperience(db, randomUUID(), input)).rejects.toThrow();
+  });
+});
+
+describe("listExperiences", () => {
+  it("returns an empty list when the profile has no experiences", async () => {
+    const { id: profileId } = await resolveProfile(db);
+
+    expect(await listExperiences(db, profileId)).toEqual([]);
+  });
+
+  it("returns the profile's experiences, newest first", async () => {
+    const { id: profileId } = await resolveProfile(db);
+    await db.insert(experience).values([
+      {
+        ...input,
+        profileId,
+        description: "Older",
+        createdAt: new Date("2026-01-01"),
+      },
+      {
+        ...input,
+        profileId,
+        description: "Newer",
+        createdAt: new Date("2026-02-01"),
+      },
+    ]);
+
+    const listed = await listExperiences(db, profileId);
+
+    expect(listed.map((e) => e.description)).toEqual(["Newer", "Older"]);
+  });
+
+  it("leaves out other profiles' experiences", async () => {
+    const { id: profileId } = await resolveProfile(db);
+    const [other] = await db.insert(profile).values({}).returning();
+    if (!other) throw new Error("Creating the other profile returned no row.");
+    await saveExperience(db, profileId, input);
+    await saveExperience(db, other.id, { ...input, description: "Not mine" });
+
+    const listed = await listExperiences(db, profileId);
+
+    expect(listed.map((e) => e.description)).toEqual([input.description]);
   });
 });

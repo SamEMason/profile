@@ -1,3 +1,4 @@
+import { desc, eq } from "drizzle-orm";
 import type { Database } from "../db/client.js";
 import { experience } from "../db/schema.js";
 import { ValidationError } from "../domain/errors.js";
@@ -33,3 +34,20 @@ export const saveExperience = async (
   if (!saved) throw new Error("Saving the experience returned no row.");
   return saved;
 };
+
+/**
+ * Lists a profile's experiences, newest first.
+ *
+ * @param db - The open database connection.
+ * @param profileId - The profile whose experiences to list.
+ * @returns The experiences, or `[]` if the profile has none (or doesn't exist).
+ */
+export const listExperiences = async (
+  db: Database,
+  profileId: string,
+): Promise<Experience[]> =>
+  db
+    .select()
+    .from(experience)
+    .where(eq(experience.profileId, profileId))
+    .orderBy(desc(experience.createdAt));
