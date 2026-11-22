@@ -19,7 +19,9 @@ cp .env.example .env   # then set a real POSTGRES_PASSWORD
 pnpm install
 pnpm dev           # start Postgres, then run with reload on save
 docker compose down  # stop Postgres (data is kept)
-pnpm test          # run tests
+pnpm test          # run unit tests
+pnpm test:db       # run database tests against a throwaway Postgres
+pnpm db:check      # check that schema changes have a migration
 pnpm typecheck     # type-check
 pnpm lint          # ESLint
 pnpm format        # Prettier (format:check to only check)
@@ -27,4 +29,4 @@ pnpm build         # compile to dist/
 pnpm start         # run the compiled output
 ```
 
-A pre-commit hook lints and formats staged files, then runs the typecheck and tests.
+A pre-commit hook lints and formats staged files, then runs the typecheck, the migration check and the unit tests. Database tests (`pnpm test:db`) aren't part of the hook.
