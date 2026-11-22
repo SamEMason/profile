@@ -1,0 +1,44 @@
+{
+  "type": "diff",
+  "version": "10",
+  "dialect": "postgres",
+  "id": "c7349cfd-e953-4a56-913a-37b0a09c1612",
+  "prevIds": [
+    "88c0645a-ba6b-4336-968a-9d5f63c04d28"
+  ],
+  "footprints": [
+    {
+      "statementType": "recreate_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "experience"
+      ],
+      "writes": [
+        "s|fk|public.experience.experience_profile_id_profile_id_fkey",
+        "n|fk|public.experience.experience_profile_id_profile_id_fkey",
+        "e|fk|public.experience.experience_profile_id_profile_id_fkey",
+        "n|con|public.experience.experience_profile_id_profile_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.experience",
+        "n|sch|public",
+        "n|tbl|public.profile",
+        "n|sch|public",
+        "n|col|public.experience.profile_id",
+        "n|col|public.profile.id",
+        "e|uniqueness|public.profile.id"
+      ],
+      "sqlHash": "0181e571845dfcc8"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "alter",
+      "key": "fks\u0000[\"public\",\"experience\",\"experience_profile_id_profile_id_fkey\"]",
+      "set": {
+        "onDelete": "CASCADE"
+      }
+    }
+  ]
+}

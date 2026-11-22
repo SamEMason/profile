@@ -17,7 +17,7 @@ export const experience = snakeCase.table("experience", {
   id: uuid().primaryKey().defaultRandom(),
   profileId: uuid()
     .notNull()
-    .references(() => profile.id),
+    .references(() => profile.id, { onDelete: "cascade" }),
   description: text().notNull(),
   skills: text().array().notNull(),
   project: text().notNull(),

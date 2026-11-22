@@ -1,0 +1,1 @@
+ALTER TABLE "experience" DROP CONSTRAINT "experience_profile_id_profile_id_fkey", ADD CONSTRAINT "experience_profile_id_profile_id_fkey" FOREIGN KEY ("profile_id") REFERENCES "profile"("id") ON DELETE CASCADE;
