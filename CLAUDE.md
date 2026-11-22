@@ -42,7 +42,7 @@ Remove the aliases once typescript-eslint supports TS 7.1+. The remaining peer w
   - `src/db/client.ts`: `connectDatabase(url)`, the shared Postgres connection for services.
   - `src/db/schema.ts`: Drizzle table definitions, the source of truth for the data shape (`snakeCase` tables: camelCase in TS, snake_case columns).
   - `src/domain/`: zod schemas derived from the tables with `drizzle-orm/zod` (`Experience`, `NewExperience`, `Profile`), plus their inferred types. Don't hand-write shapes here; change the table instead.
-- `docs/`: project documents, such as the development plan.
+- `docs/`: project documents. `profile-development-plan.md` covers goals and phases, and `architecture.md` covers what's built and how it fits (Mermaid diagrams; keep it current as layers are added).
 - `tests/`: Vitest tests (`*.test.ts`). `tests/smoke.test.ts` (`1 + 1 = 2`) stays permanently.
   - `tests/db/`: database tests, run only by `pnpm test:db`. `setup.ts` is their global setup: it starts the throwaway Postgres, migrates it, provides its URL (`inject("databaseUrl")`) and removes it afterwards.
 - `config/`: tooling config.
