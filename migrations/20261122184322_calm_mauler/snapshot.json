@@ -1,0 +1,214 @@
+{
+  "type": "base",
+  "version": "10",
+  "dialect": "postgres",
+  "id": "88c0645a-ba6b-4336-968a-9d5f63c04d28",
+  "prevIds": ["00000000-0000-0000-0000-000000000000"],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": ["table", "public", "experience"],
+      "writes": [
+        "s|tbl|public.experience",
+        "n|tbl|public.experience",
+        "e|tbl|public.experience",
+        "n|rel|public.experience",
+        "n|type|public.experience",
+        "n|rel|public.experience_pkey"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": ["table", "public", "profile"],
+      "writes": [
+        "s|tbl|public.profile",
+        "n|tbl|public.profile",
+        "e|tbl|public.profile",
+        "n|rel|public.profile",
+        "n|type|public.profile",
+        "n|rel|public.profile_pkey"
+      ],
+      "reads": ["n|sch|public"]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": ["table", "public", "experience"],
+      "writes": [
+        "s|fk|public.experience.experience_profile_id_profile_id_fkey",
+        "n|fk|public.experience.experience_profile_id_profile_id_fkey",
+        "e|fk|public.experience.experience_profile_id_profile_id_fkey",
+        "n|con|public.experience.experience_profile_id_profile_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.experience",
+        "n|sch|public",
+        "n|tbl|public.profile",
+        "n|sch|public",
+        "n|col|public.experience.profile_id",
+        "n|col|public.profile.id",
+        "e|uniqueness|public.profile.id"
+      ]
+    }
+  ],
+  "ddl": [
+    {
+      "schema": "public",
+      "name": "experience",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "profile",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "table": "experience",
+      "name": "id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "experience",
+      "name": "profile_id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "experience",
+      "name": "description",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "experience",
+      "name": "skills",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 1,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "experience",
+      "name": "project",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "experience",
+      "name": "source",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "experience",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "profile",
+      "name": "id",
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "profile",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "experience",
+      "name": "experience_profile_id_profile_id_fkey",
+      "nameExplicit": false,
+      "columns": ["profile_id"],
+      "schemaTo": "public",
+      "tableTo": "profile",
+      "columnsTo": ["id"],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "experience",
+      "name": "experience_pkey",
+      "columns": ["id"],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "profile",
+      "name": "profile_pkey",
+      "columns": ["id"],
+      "nameExplicit": false,
+      "entityType": "pks"
+    }
+  ]
+}

@@ -38,8 +38,8 @@ Remove the aliases once typescript-eslint supports TS 7.1+. The remaining peer w
 ## Layout
 
 - `src/`: application code, compiled to `dist/` by `tsconfig.build.json`.
+  - `src/db/schema.ts`: Drizzle table definitions, the source of truth for the data shape (`snakeCase` tables: camelCase in TS, snake_case columns).
   - `src/domain/`: zod schemas and their inferred types (`Experience`, `Profile`).
-  - `src/lib/`: small helpers (`newId`, `now`).
 - `docs/`: project documents, such as the development plan.
 - `tests/`: Vitest tests (`*.test.ts`).
 - `config/`: tooling config (`lint-staged.ts`, `drizzle.ts` for drizzle-kit).
@@ -52,6 +52,8 @@ Remove the aliases once typescript-eslint supports TS 7.1+. The remaining peer w
 - `pnpm dev`: start the Postgres container (waiting until it's healthy), then run `src/index.ts` with tsx, restarting on save (no type-checking). `docker compose down` stops the database and keeps its data.
 - `pnpm db:generate`: generate a SQL migration in `migrations/` from changes to `src/db/schema.ts`
 - `pnpm db:migrate`: apply pending migrations to the database in `DATABASE_URL`
+- `pnpm db:studio`: browse and edit the data in Drizzle Studio (local server on 127.0.0.1:4983, opened at local.drizzle.studio)
+- `pnpm db:psql`: open an interactive psql session in the Postgres container (`\q` to quit)
 - `pnpm test`: run tests once
 - `pnpm typecheck`: type-check everything
 - `pnpm lint`: ESLint
