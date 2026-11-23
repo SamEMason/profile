@@ -129,3 +129,28 @@ export const updateExperience = async (
   if (!updated) throw new NotFoundError(`No experience with id "${id}".`);
   return updated;
 };
+
+/**
+ * Deletes one of a profile's experiences.
+ *
+ * @param db - The open database connection.
+ * @param profileId - The profile the experience must belong to.
+ * @param id - The experience's id.
+ * @returns The deleted experience, e.g. for confirming what was removed.
+ * @throws {NotFoundError} If no experience with that id belongs to the profile.
+ */
+export const deleteExperience = async (
+  db: Database,
+  profileId: string,
+  id: string,
+): Promise<Experience> => {
+  const [deleted] = isUuid(id)
+    ? await db
+        .delete(experience)
+        .where(and(eq(experience.id, id), eq(experience.profileId, profileId)))
+        .returning()
+    : [];
+
+  if (!deleted) throw new NotFoundError(`No experience with id "${id}".`);
+  return deleted;
+};
