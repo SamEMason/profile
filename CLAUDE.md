@@ -43,6 +43,8 @@ Remove the aliases once typescript-eslint supports TS 7.1+. The remaining peer w
   - `src/db/client.ts`: `connectDatabase(url)`, the shared Postgres connection for services.
   - `src/db/schema.ts`: Drizzle table definitions, the source of truth for the data shape (`snakeCase` tables: camelCase in TS, snake_case columns).
   - `src/domain/`: zod schemas derived from the tables with `drizzle-orm/zod` (`Experience`, `NewExperience`, `Profile`), plus their inferred types. Don't hand-write shapes here; change the table instead.
+  - `src/services/`: the operations callers use, each taking the open `db` first. `experience.ts` has save, list, get, update and delete, all scoped to a profile; `profile.ts` has `resolveProfile`.
+    - `lib/`: helpers shared by services, not services themselves. `lookup.ts` has `isUuid` and `ownedExperience` (the "this experience, only within this profile" condition).
 - `docs/`: project documents.
   - `roadmap.md`: the remaining dev work, in order: numbered steps with lettered items. Finished items are deleted (git keeps the history). Updated by `/consume-plans`.
   - `plan/`: the queue of planning docs waiting to be consumed into the roadmap. `/consume-plans` runs `/grill-me` on everything in it, writes what you confirm to the roadmap, and moves consumed docs to `plan/archive/` as `<YYYY-MM-DD>-<name>.md`.
