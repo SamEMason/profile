@@ -1,5 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
-import * as z from "zod";
+import { desc, eq } from "drizzle-orm";
 import type { Database } from "#src/db/client.js";
 import { experience } from "#src/db/schema.js";
 import { NotFoundError, ValidationError } from "#src/domain/errors.js";
@@ -8,15 +7,7 @@ import {
   NewExperience,
   type Experience,
 } from "#src/domain/experience.js";
-
-/**
- * Whether an id is a UUID. Ids that aren't can't match a row, so services
- * treat them as not found instead of letting Postgres reject the query.
- *
- * @param id - The id to check, e.g. `"not-a-uuid"` (false).
- * @returns `true` if `id` is a UUID.
- */
-const isUuid = (id: string): boolean => z.uuid().safeParse(id).success;
+import { isUuid, ownedExperience } from "#src/services/lib/lookup.js";
 
 /**
  * Validates an experience and saves it to a profile.
@@ -84,10 +75,7 @@ export const getExperience = async (
   id: string,
 ): Promise<Experience> => {
   const [found] = isUuid(id)
-    ? await db
-        .select()
-        .from(experience)
-        .where(and(eq(experience.id, id), eq(experience.profileId, profileId)))
+    ? await db.select().from(experience).where(ownedExperience(profileId, id))
     : [];
 
   if (!found) throw new NotFoundError(`No experience with id "${id}".`);
@@ -122,7 +110,7 @@ export const updateExperience = async (
     ? await db
         .update(experience)
         .set(parsed.data)
-        .where(and(eq(experience.id, id), eq(experience.profileId, profileId)))
+        .where(ownedExperience(profileId, id))
         .returning()
     : [];
 
@@ -147,7 +135,7 @@ export const deleteExperience = async (
   const [deleted] = isUuid(id)
     ? await db
         .delete(experience)
-        .where(and(eq(experience.id, id), eq(experience.profileId, profileId)))
+        .where(ownedExperience(profileId, id))
         .returning()
     : [];
 
