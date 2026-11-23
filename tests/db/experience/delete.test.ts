@@ -5,16 +5,10 @@ import { experience } from "#src/db/schema.js";
 import { NotFoundError } from "#src/domain/errors.js";
 import { deleteExperience, saveExperience } from "#src/services/experience.js";
 import { resolveProfile } from "#src/services/profile.js";
+import { sampleExperience } from "#tests/db/fixtures.js";
 import { resetDatabase } from "#tests/db/reset.js";
 
 const db = connectDatabase(inject("databaseUrl"));
-
-const input = {
-  description: "Set up Postgres in Docker",
-  skills: ["Docker", "PostgreSQL"],
-  project: "Profile",
-  source: "conversation",
-};
 
 beforeEach(async () => {
   await resetDatabase(db);
@@ -27,7 +21,7 @@ afterAll(async () => {
 describe("deleteExperience", () => {
   it("deletes the experience and returns it", async () => {
     const { id: profileId } = await resolveProfile(db);
-    const saved = await saveExperience(db, profileId, input);
+    const saved = await saveExperience(db, profileId, sampleExperience);
 
     expect(await deleteExperience(db, profileId, saved.id)).toEqual(saved);
     expect(await db.select().from(experience)).toEqual([]);
@@ -35,9 +29,9 @@ describe("deleteExperience", () => {
 
   it("leaves the profile's other experiences", async () => {
     const { id: profileId } = await resolveProfile(db);
-    const kept = await saveExperience(db, profileId, input);
+    const kept = await saveExperience(db, profileId, sampleExperience);
     const removed = await saveExperience(db, profileId, {
-      ...input,
+      ...sampleExperience,
       description: "Remove me",
     });
 

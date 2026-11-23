@@ -5,16 +5,10 @@ import { experience } from "#src/db/schema.js";
 import { NotFoundError, ValidationError } from "#src/domain/errors.js";
 import { saveExperience, updateExperience } from "#src/services/experience.js";
 import { resolveProfile } from "#src/services/profile.js";
+import { invalidFields, sampleExperience } from "#tests/db/fixtures.js";
 import { resetDatabase } from "#tests/db/reset.js";
 
 const db = connectDatabase(inject("databaseUrl"));
-
-const input = {
-  description: "Set up Postgres in Docker",
-  skills: ["Docker", "PostgreSQL"],
-  project: "Profile",
-  source: "conversation",
-};
 
 beforeEach(async () => {
   await resetDatabase(db);
@@ -27,13 +21,16 @@ afterAll(async () => {
 describe("updateExperience", () => {
   it("changes only the fields passed", async () => {
     const { id: profileId } = await resolveProfile(db);
-    const saved = await saveExperience(db, profileId, input);
+    const saved = await saveExperience(db, profileId, sampleExperience);
 
     const updated = await updateExperience(db, profileId, saved.id, {
       skills: ["Docker", "Colima"],
     });
 
-    expect(updated).toMatchObject({ ...input, skills: ["Docker", "Colima"] });
+    expect(updated).toMatchObject({
+      ...sampleExperience,
+      skills: ["Docker", "Colima"],
+    });
     expect(await db.select().from(experience)).toEqual([updated]);
   });
 
@@ -42,7 +39,12 @@ describe("updateExperience", () => {
     const then = new Date("2026-01-01");
     const [saved] = await db
       .insert(experience)
-      .values({ ...input, profileId, createdAt: then, updatedAt: then })
+      .values({
+        ...sampleExperience,
+        profileId,
+        createdAt: then,
+        updatedAt: then,
+      })
       .returning();
     if (!saved) throw new Error("Inserting the experience returned no row.");
 
@@ -56,7 +58,7 @@ describe("updateExperience", () => {
 
   it("trims stray spaces", async () => {
     const { id: profileId } = await resolveProfile(db);
-    const saved = await saveExperience(db, profileId, input);
+    const saved = await saveExperience(db, profileId, sampleExperience);
 
     const updated = await updateExperience(db, profileId, saved.id, {
       project: "  Profile v2  ",
@@ -65,22 +67,22 @@ describe("updateExperience", () => {
     expect(updated.project).toBe("Profile v2");
   });
 
-  it("rejects bad input and changes nothing", async () => {
-    const { id: profileId } = await resolveProfile(db);
-    const saved = await saveExperience(db, profileId, input);
+  it.each(invalidFields)(
+    "rejects %s and changes nothing",
+    async (_name, fields) => {
+      const { id: profileId } = await resolveProfile(db);
+      const saved = await saveExperience(db, profileId, sampleExperience);
 
-    await expect(
-      updateExperience(db, profileId, saved.id, { skills: [] }),
-    ).rejects.toBeInstanceOf(ValidationError);
-    await expect(
-      updateExperience(db, profileId, saved.id, { notes: "x" }),
-    ).rejects.toBeInstanceOf(ValidationError);
-    expect(await db.select().from(experience)).toEqual([saved]);
-  });
+      await expect(
+        updateExperience(db, profileId, saved.id, fields),
+      ).rejects.toBeInstanceOf(ValidationError);
+      expect(await db.select().from(experience)).toEqual([saved]);
+    },
+  );
 
   it("rejects an empty change", async () => {
     const { id: profileId } = await resolveProfile(db);
-    const saved = await saveExperience(db, profileId, input);
+    const saved = await saveExperience(db, profileId, sampleExperience);
 
     await expect(
       updateExperience(db, profileId, saved.id, {}),

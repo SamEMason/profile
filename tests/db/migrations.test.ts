@@ -1,23 +1,21 @@
 import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
-import { afterAll, describe, expect, inject, it } from "vitest";
+import { afterAll, beforeEach, describe, expect, inject, it } from "vitest";
 import { connectDatabase } from "#src/db/client.js";
 import { experience, profile } from "#src/db/schema.js";
 import { Experience } from "#src/domain/experience.js";
+import { sampleExperience } from "#tests/db/fixtures.js";
+import { resetDatabase } from "#tests/db/reset.js";
 
 const db = connectDatabase(inject("databaseUrl"));
+
+beforeEach(async () => {
+  await resetDatabase(db);
+});
 
 afterAll(async () => {
   await db.$client.end();
 });
-
-/** A valid experience's fields, minus the profile it belongs to. */
-const sampleExperience = {
-  description: "Set up Postgres in Docker",
-  skills: ["Docker", "PostgreSQL"],
-  project: "Profile",
-  source: "conversation",
-};
 
 describe("migrations", () => {
   it("create the profile and experience tables", async () => {

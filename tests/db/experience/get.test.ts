@@ -4,16 +4,10 @@ import { connectDatabase } from "#src/db/client.js";
 import { NotFoundError } from "#src/domain/errors.js";
 import { getExperience, saveExperience } from "#src/services/experience.js";
 import { resolveProfile } from "#src/services/profile.js";
+import { sampleExperience } from "#tests/db/fixtures.js";
 import { resetDatabase } from "#tests/db/reset.js";
 
 const db = connectDatabase(inject("databaseUrl"));
-
-const input = {
-  description: "Set up Postgres in Docker",
-  skills: ["Docker", "PostgreSQL"],
-  project: "Profile",
-  source: "conversation",
-};
 
 beforeEach(async () => {
   await resetDatabase(db);
@@ -26,7 +20,7 @@ afterAll(async () => {
 describe("getExperience", () => {
   it("returns the experience with that id", async () => {
     const { id: profileId } = await resolveProfile(db);
-    const saved = await saveExperience(db, profileId, input);
+    const saved = await saveExperience(db, profileId, sampleExperience);
 
     expect(await getExperience(db, profileId, saved.id)).toEqual(saved);
   });

@@ -3,16 +3,10 @@ import { connectDatabase } from "#src/db/client.js";
 import { experience } from "#src/db/schema.js";
 import { listExperiences } from "#src/services/experience.js";
 import { resolveProfile } from "#src/services/profile.js";
+import { sampleExperience } from "#tests/db/fixtures.js";
 import { resetDatabase } from "#tests/db/reset.js";
 
 const db = connectDatabase(inject("databaseUrl"));
-
-const input = {
-  description: "Set up Postgres in Docker",
-  skills: ["Docker", "PostgreSQL"],
-  project: "Profile",
-  source: "conversation",
-};
 
 beforeEach(async () => {
   await resetDatabase(db);
@@ -33,13 +27,13 @@ describe("listExperiences", () => {
     const { id: profileId } = await resolveProfile(db);
     await db.insert(experience).values([
       {
-        ...input,
+        ...sampleExperience,
         profileId,
         description: "Older",
         createdAt: new Date("2026-01-01"),
       },
       {
-        ...input,
+        ...sampleExperience,
         profileId,
         description: "Newer",
         createdAt: new Date("2026-02-01"),
