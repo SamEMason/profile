@@ -2,7 +2,6 @@
 
 1. Capture foundation
    a. MCP server over the experience services (save, list, get, update, delete)
-      a2. Test harness: in-memory MCP client (dev dependency) and `save_experience` tests
       a3. `list_experiences` and `get_experience`, with read-only hints, and tests
       a4. `update_experience` and tests
       a5. `delete_experience`, with a destructive hint, and tests
