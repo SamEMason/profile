@@ -52,6 +52,7 @@ Remove the aliases once typescript-eslint supports TS 7.1+. The remaining peer w
 - `tests/`: Vitest tests (`*.test.ts`). `tests/smoke.test.ts` (`1 + 1 = 2`) stays permanently.
   - `tests/db/`: database tests, run only by `pnpm test:db`. `setup.ts` is their global setup: it starts the throwaway Postgres, migrates it, provides its URL (`inject("databaseUrl")`) and removes it afterwards.
     - `reset.ts`: `resetDatabase(db)` empties every table; call it in `beforeEach` in DB test files.
+    - `fixtures.ts`: shared test data. `sampleExperience` is a valid experience; `invalidFields` lists bad fields, run against both save and update.
 - `config/`: tooling config.
   - `lint-staged.ts`, and `drizzle.ts` for drizzle-kit.
   - `vitest.ts` for unit tests (everything except `tests/db/`) and `vitest-db.ts` for DB tests. `vitest-db.ts` also holds `testDatabase`: its URL, plus `keepAfterRun` (set it to `true` to keep the test database for inspecting with psql).

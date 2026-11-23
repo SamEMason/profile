@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { snakeCase, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 /**
@@ -23,9 +24,12 @@ export const experience = snakeCase.table("experience", {
   project: text().notNull(),
   source: text().notNull(),
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
-  /** Set to now on insert, and on every update made through Drizzle. */
+  /**
+   * Set to now on insert, and on every update made through Drizzle. Both use
+   * Postgres's clock (`now()`), the same one `createdAt` uses.
+   */
   updatedAt: timestamp({ withTimezone: true })
     .notNull()
     .defaultNow()
-    .$onUpdate(() => new Date()),
+    .$onUpdate(() => sql`now()`),
 });
