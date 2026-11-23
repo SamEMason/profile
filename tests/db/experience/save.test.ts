@@ -42,9 +42,11 @@ describe("saveExperience", () => {
     const saved = await saveExperience(db, profileId, {
       ...input,
       description: "  Set up Postgres in Docker  ",
+      skills: ["  Docker ", "PostgreSQL  "],
     });
 
     expect(saved.description).toBe("Set up Postgres in Docker");
+    expect(saved.skills).toEqual(["Docker", "PostgreSQL"]);
   });
 
   it("rejects bad input and saves nothing", async () => {
@@ -52,6 +54,12 @@ describe("saveExperience", () => {
 
     await expect(
       saveExperience(db, profileId, { ...input, skills: [] }),
+    ).rejects.toBeInstanceOf(ValidationError);
+    await expect(
+      saveExperience(db, profileId, { ...input, skills: [""] }),
+    ).rejects.toBeInstanceOf(ValidationError);
+    await expect(
+      saveExperience(db, profileId, { ...input, skills: ["Docker", "   "] }),
     ).rejects.toBeInstanceOf(ValidationError);
     expect(await db.select().from(experience)).toEqual([]);
   });

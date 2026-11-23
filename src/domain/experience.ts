@@ -12,14 +12,15 @@ export type Experience = z.infer<typeof Experience>;
  *
  * - The database fills in `id`, `createdAt` and `updatedAt`, and the service sets
  *   `profileId`, so callers can't supply them.
- * - Text fields must be non-empty after trimming, and `skills` needs at least one item.
+ * - Text fields, including each skill, must be non-empty after trimming, and
+ *   `skills` needs at least one item.
  * - Unknown keys are rejected rather than silently dropped, so a field the
  *   agent thought it saved can't go missing unnoticed.
  */
 export const NewExperience = z.strictObject(
   createInsertSchema(experience, {
     description: (schema) => schema.trim().min(1),
-    skills: (schema) => schema.min(1),
+    skills: z.array(z.string().trim().min(1)).min(1),
     project: (schema) => schema.trim().min(1),
     source: (schema) => schema.trim().min(1),
   }).omit({ id: true, profileId: true, createdAt: true, updatedAt: true })
