@@ -6,7 +6,7 @@ People constantly generate valuable experience through work, learning and projec
 
 The first version captures software development experience through coding-agent skills. The agent finds candidate experiences, either from the work you've just done or by going back through an existing project. It refines them with you in conversation and saves the records you approve.
 
-See the [development plan](docs/profile-development-plan.md) for goals, phases and next steps, and [architecture](docs/architecture.md) for what's built and how the pieces fit.
+See the [roadmap](docs/roadmap.md) for the planned work. The original planning docs are in [docs/plan/archive](docs/plan/archive/).
 
 **Status:** early development.
 
