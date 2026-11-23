@@ -1,8 +1,8 @@
 import { afterAll, beforeEach, describe, expect, inject, it } from "vitest";
-import { connectDatabase } from "../../src/db/client.js";
-import { profile } from "../../src/db/schema.js";
-import { resolveProfile } from "../../src/services/profile.js";
-import { resetDatabase } from "./reset.js";
+import { connectDatabase } from "#src/db/client.js";
+import { profile } from "#src/db/schema.js";
+import { resolveProfile } from "#src/services/profile.js";
+import { resetDatabase } from "#tests/db/reset.js";
 
 const db = connectDatabase(inject("databaseUrl"));
 

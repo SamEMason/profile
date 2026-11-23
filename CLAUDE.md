@@ -24,7 +24,8 @@ This project is augmented manual programming: Claude does most of the implementa
 - pnpm 12, ESM, TypeScript, Vitest, ESLint, Prettier, Husky with lint-staged.
 - zod for domain schemas.
 - Persistence (planned): PostgreSQL in Docker Compose, with version-controlled migrations and a separate test database.
-- `module: nodenext`: relative imports use `.js` extensions in `.ts` files.
+- `module: nodenext`: imports use `.js` extensions in `.ts` files.
+- Imports use the `#` aliases from `package.json`'s `"imports"` field, never relative paths: `#src/…`, `#tests/…`, `#config/…`, `#scripts/…` (for example `import { connectDatabase } from "#src/db/client.js"`). `#src` points at `dist/` under the `production` condition, which `pnpm start` sets, and at `src/` everywhere else.
 
 ### TypeScript 6/7 workaround
 

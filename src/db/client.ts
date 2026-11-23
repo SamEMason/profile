@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
-import { databaseConfig } from "../config.js";
+import { databaseConfig } from "#src/config.js";
 
 /**
  * Connects to Postgres through a new connection pool. Connections open lazily,

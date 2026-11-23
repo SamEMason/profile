@@ -1,6 +1,6 @@
-import type { Database } from "../db/client.js";
-import { profile } from "../db/schema.js";
-import type { Profile } from "../domain/profile.js";
+import type { Database } from "#src/db/client.js";
+import { profile } from "#src/db/schema.js";
+import type { Profile } from "#src/domain/profile.js";
 
 /**
  * Finds the profile that services should act on, creating it on first use.

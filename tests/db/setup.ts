@@ -1,9 +1,9 @@
 import { fileURLToPath } from "node:url";
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import type { TestProject } from "vitest/node";
-import { testDatabase } from "../../config/vitest-db.js";
-import { runCompose } from "../../scripts/lib/compose.js";
-import { connectDatabase } from "../../src/db/client.js";
+import { testDatabase } from "#config/vitest-db.js";
+import { runCompose } from "#scripts/lib/compose.js";
+import { connectDatabase } from "#src/db/client.js";
 
 /** The test database's compose file, resolved from this file so it works from any folder. */
 const COMPOSE_FILE = fileURLToPath(

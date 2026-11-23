@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { afterAll, describe, expect, inject, it } from "vitest";
-import { connectDatabase } from "../../src/db/client.js";
-import { experience, profile } from "../../src/db/schema.js";
-import { Experience } from "../../src/domain/experience.js";
+import { connectDatabase } from "#src/db/client.js";
+import { experience, profile } from "#src/db/schema.js";
+import { Experience } from "#src/domain/experience.js";
 
 const db = connectDatabase(inject("databaseUrl"));
 

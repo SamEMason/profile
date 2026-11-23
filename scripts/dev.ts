@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { styleText } from "node:util";
-import { runCompose } from "./lib/compose.js";
+import { runCompose } from "#scripts/lib/compose.js";
 
 /** The word "profile" in block letters, shown at the top of `pnpm dev`. */
 const WORDMARK: readonly string[] = [

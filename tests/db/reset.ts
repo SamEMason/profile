@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import type { Database } from "../../src/db/client.js";
+import type { Database } from "#src/db/client.js";
 
 /**
  * Empties every table, so each test starts from a known state.
