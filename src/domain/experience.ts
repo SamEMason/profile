@@ -1,6 +1,6 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-orm/zod";
 import * as z from "zod";
-import { experience } from "../db/schema.js";
+import { experience } from "#src/db/schema.js";
 
 /** An experience as stored, derived from the `experience` table. */
 export const Experience = createSelectSchema(experience);
@@ -27,3 +27,15 @@ export const NewExperience = z.strictObject(
 );
 
 export type NewExperience = z.infer<typeof NewExperience>;
+
+/**
+ * What a caller provides to change an experience: any of the `NewExperience`
+ * fields, with the same rules (trimmed, non-empty, no unknown keys).
+ * At least one field is required, since an empty change is almost certainly a mistake.
+ */
+export const UpdatedExperience = NewExperience.partial().refine(
+  (changes) => Object.values(changes).some((value) => value !== undefined),
+  { message: "Provide at least one field to change." },
+);
+
+export type UpdatedExperience = z.infer<typeof UpdatedExperience>;

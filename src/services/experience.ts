@@ -1,9 +1,22 @@
 import { and, desc, eq } from "drizzle-orm";
 import * as z from "zod";
-import type { Database } from "../db/client.js";
-import { experience } from "../db/schema.js";
-import { NotFoundError, ValidationError } from "../domain/errors.js";
-import { NewExperience, type Experience } from "../domain/experience.js";
+import type { Database } from "#src/db/client.js";
+import { experience } from "#src/db/schema.js";
+import { NotFoundError, ValidationError } from "#src/domain/errors.js";
+import {
+  UpdatedExperience,
+  NewExperience,
+  type Experience,
+} from "#src/domain/experience.js";
+
+/**
+ * Whether an id is a UUID. Ids that aren't can't match a row, so services
+ * treat them as not found instead of letting Postgres reject the query.
+ *
+ * @param id - The id to check, e.g. `"not-a-uuid"` (false).
+ * @returns `true` if `id` is a UUID.
+ */
+const isUuid = (id: string): boolean => z.uuid().safeParse(id).success;
 
 /**
  * Validates an experience and saves it to a profile.
@@ -16,7 +29,7 @@ import { NewExperience, type Experience } from "../domain/experience.js";
  * @param profileId - The profile to save to, usually from `resolveProfile`.
  * @param input - The proposed experience, e.g.
  *   `{ description: "Set up Postgres in Docker", skills: ["Docker"], project: "Profile", source: "conversation" }`.
- * @returns The saved experience, with its `id`, `profileId` and `createdAt`.
+ * @returns The saved experience, with its `id`, `profileId`, `createdAt` and `updatedAt`.
  * @throws {ValidationError} If the input doesn't match `NewExperience`.
  * @throws If `profileId` doesn't match a profile (the foreign key rejects it).
  */
@@ -70,9 +83,7 @@ export const getExperience = async (
   profileId: string,
   id: string,
 ): Promise<Experience> => {
-  const isUuid = z.uuid().safeParse(id).success;
-
-  const [found] = isUuid
+  const [found] = isUuid(id)
     ? await db
         .select()
         .from(experience)
@@ -81,4 +92,40 @@ export const getExperience = async (
 
   if (!found) throw new NotFoundError(`No experience with id "${id}".`);
   return found;
+};
+
+/**
+ * Changes some fields of one of a profile's experiences.
+ *
+ * The changes are checked against `UpdatedExperience` before anything is written,
+ * so bad input changes nothing. Fields that aren't passed are left as they are,
+ * and `updatedAt` is set to now by the column's `$onUpdate`.
+ *
+ * @param db - The open database connection.
+ * @param profileId - The profile the experience must belong to.
+ * @param id - The experience's id.
+ * @param changes - The fields to change, e.g. `{ skills: ["Docker", "Colima"] }`.
+ * @returns The updated experience.
+ * @throws {ValidationError} If the changes don't match `UpdatedExperience`.
+ * @throws {NotFoundError} If no experience with that id belongs to the profile.
+ */
+export const updateExperience = async (
+  db: Database,
+  profileId: string,
+  id: string,
+  changes: unknown,
+): Promise<Experience> => {
+  const parsed = UpdatedExperience.safeParse(changes);
+  if (!parsed.success) throw new ValidationError(parsed.error);
+
+  const [updated] = isUuid(id)
+    ? await db
+        .update(experience)
+        .set(parsed.data)
+        .where(and(eq(experience.id, id), eq(experience.profileId, profileId)))
+        .returning()
+    : [];
+
+  if (!updated) throw new NotFoundError(`No experience with id "${id}".`);
+  return updated;
 };
