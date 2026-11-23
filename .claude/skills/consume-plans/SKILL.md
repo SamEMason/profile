@@ -47,7 +47,8 @@ Ask in plain text, one question at a time. Write nothing until `grill-me` reache
 1. Write `docs/roadmap.md` from the confirmed summary only: the user's decisions, in the user's words. Don't pad it with doc text, evidence or hedges the user didn't ask for.
 2. Move each consumed doc to `docs/plan/archive/<YYYY-MM-DD>-<original name>.md`. Use `git mv` for a tracked file and `mv` for an untracked one.
 3. Search the repo (excluding `node_modules`, `.git` and `docs/plan/archive/`) for the consumed docs' old paths, and update the references.
-4. Run `pnpm format:check`. If it flags anything, run `pnpm format`.
+
+Change only the roadmap, the archived docs and those references. The pre-commit hook formats staged files, so don't format the repo.
 
 ### 5. Report
 
