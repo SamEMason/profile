@@ -23,7 +23,7 @@ This project is augmented manual programming: Claude does most of the implementa
 - Node 24, pinned with pnpm's `devEngines.runtime`. pnpm downloads it and uses it for every `pnpm` command and the git hook. Plain `node` in the shell may be a different version.
 - pnpm 12, ESM, TypeScript, Vitest, ESLint, Prettier, Husky with lint-staged.
 - zod for domain schemas.
-- Persistence (planned): PostgreSQL in Docker Compose, with version-controlled migrations and a separate test database.
+- Persistence: PostgreSQL in Docker Compose, with Drizzle ORM, drizzle-kit migrations and a separate throwaway test database.
 - `module: nodenext`: imports use `.js` extensions in `.ts` files.
 - Imports use the `#` aliases from `package.json`'s `"imports"` field, never relative paths: `#src/…`, `#tests/…`, `#config/…`, `#scripts/…` (for example `import { connectDatabase } from "#src/db/client.js"`). `#src` points at `dist/` under the `production` condition, which `pnpm start` sets, and at `src/` everywhere else.
 
@@ -43,6 +43,7 @@ Remove the aliases once typescript-eslint supports TS 7.1+. The remaining peer w
   - `src/db/client.ts`: `connectDatabase(url)`, the shared Postgres connection for services.
   - `src/db/schema.ts`: Drizzle table definitions, the source of truth for the data shape (`snakeCase` tables: camelCase in TS, snake_case columns).
   - `src/domain/`: zod schemas derived from the tables with `drizzle-orm/zod` (`Experience`, `NewExperience`, `Profile`), plus their inferred types. Don't hand-write shapes here; change the table instead.
+    - `errors.ts`: `ValidationError` (bad input, one problem per line) and `NotFoundError` (missing, or in another profile).
   - `src/services/`: the operations callers use, each taking the open `db` first. `experience.ts` has save, list, get, update and delete, all scoped to a profile; `profile.ts` has `resolveProfile`.
     - `lib/`: helpers shared by services, not services themselves. `lookup.ts` has `isUuid` and `ownedExperience` (the "this experience, only within this profile" condition).
 - `docs/`: project documents.
@@ -50,6 +51,7 @@ Remove the aliases once typescript-eslint supports TS 7.1+. The remaining peer w
   - `plan/`: the queue of planning docs waiting to be consumed into the roadmap. `/consume-plans` runs `/grill-me` on everything in it, writes what you confirm to the roadmap, and moves consumed docs to `plan/archive/` as `<YYYY-MM-DD>-<name>.md`.
 - `tests/`: Vitest tests (`*.test.ts`). `tests/smoke.test.ts` (`1 + 1 = 2`) stays permanently.
   - `tests/db/`: database tests, run only by `pnpm test:db`. `setup.ts` is their global setup: it starts the throwaway Postgres, migrates it, provides its URL (`inject("databaseUrl")`) and removes it afterwards.
+    - `reset.ts`: `resetDatabase(db)` empties every table; call it in `beforeEach` in DB test files.
 - `config/`: tooling config.
   - `lint-staged.ts`, and `drizzle.ts` for drizzle-kit.
   - `vitest.ts` for unit tests (everything except `tests/db/`) and `vitest-db.ts` for DB tests. `vitest-db.ts` also holds `testDatabase`: its URL, plus `keepAfterRun` (set it to `true` to keep the test database for inspecting with psql).
