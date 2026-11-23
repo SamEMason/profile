@@ -2,7 +2,6 @@
 
 1. Capture foundation
    a. MCP server over the experience services (save, list, get, update, delete)
-      a1. `mcpServer(db)` with `save_experience` only; domain errors become readable tool errors
       a2. Test harness: in-memory MCP client (dev dependency) and `save_experience` tests
       a3. `list_experiences` and `get_experience`, with read-only hints, and tests
       a4. `update_experience` and tests
