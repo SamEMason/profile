@@ -3,6 +3,7 @@ import * as z from "zod";
 import type { Database } from "#src/db/client.js";
 import { NewExperience, UpdatedExperience } from "#src/domain/experience.js";
 import {
+  deleteExperience,
   getExperience,
   listExperiences,
   saveExperience,
@@ -33,7 +34,7 @@ const jsonResult = (value: unknown) => ({
  *
  * @param db - The open database connection the tools use.
  * @returns The server, with `save_experience`, `list_experiences`,
- *   `get_experience` and `update_experience` registered.
+ *   `get_experience`, `update_experience` and `delete_experience` registered.
  */
 export const mcpServer = (db: Database): McpServer => {
   const server = new McpServer({ name: "profile", version: "0.1.0" });
@@ -95,6 +96,20 @@ export const mcpServer = (db: Database): McpServer => {
     },
     async ({ id, changes }) =>
       respond((profileId) => updateExperience(db, profileId, id, changes)),
+  );
+
+  server.registerTool(
+    "delete_experience",
+    {
+      description:
+        "Delete one of the profile's experiences and return what was deleted. Only call this after the user has confirmed the deletion.",
+      inputSchema: z.strictObject({
+        id: z.string().describe("The experience's id, from list_experiences"),
+      }),
+      annotations: { destructiveHint: true },
+    },
+    async ({ id }) =>
+      respond((profileId) => deleteExperience(db, profileId, id)),
   );
 
   return server;
