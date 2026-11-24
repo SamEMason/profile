@@ -1,16 +1,16 @@
 # Roadmap
 
 1. Capture foundation
-   - **b.** Ongoing capture skill
-     - **b1.** Propose a record: fill fields from what the user said or the skill observed (repo → project, changed files → skills), mark where each value came from, and ask for the rest
-     - **b2.** Check for duplicates: list experiences and compare; on a likely match, say "This may duplicate …" and show both side by side
-     - **b3.** Refine in a loop, then end with save as new (`save_experience`), update the existing one (`update_experience`) or drop; nothing is saved without approval
-     - **b4.** Confirm what was saved
-   - **c.** Backup and restore
-     - **c1.** `pnpm db:backup`: `pg_dump` to a timestamped file in `~/._.profile/backups`; keep every backup
-     - **c2.** Automatic backups before each `db:migrate`, and when `pnpm dev` or `pnpm start:mcp` starts (at most once a day)
-     - **c3.** `pnpm db:restore <file>`: merge, never wipe. Add missing rows; when an id exists in both, keep the live row and list the clash in the summary. Back up the live data first and require typing `restore` (`--yes` skips the prompt)
-     - **c4.** Restore tests in a temporary folder: deleted rows come back, new rows stay, live edits are kept and reported, and restore backs up first
+   - **a.** Ongoing capture skill
+     - **a1.** Propose a record: fill fields from what the user said or the skill observed (repo → project, changed files → skills), mark where each value came from, and ask for the rest
+     - **a2.** Check for duplicates: list experiences and compare; on a likely match, say "This may duplicate …" and show both side by side
+     - **a3.** Refine in a loop, then end with save as new (`save_experience`), update the existing one (`update_experience`) or drop; nothing is saved without approval
+     - **a4.** Confirm what was saved
+   - **b.** Backup and restore
+     - **b1.** `pnpm db:backup`: `pg_dump` to a timestamped file in `~/._.profile/backups`; keep every backup
+     - **b2.** Automatic backups before each `db:migrate`, and when `pnpm dev` or `pnpm start:mcp` starts (at most once a day)
+     - **b3.** `pnpm db:restore <file>`: merge, never wipe. Add missing rows; when an id exists in both, keep the live row and list the clash in the summary. Back up the live data first and require typing `restore` (`--yes` skips the prompt)
+     - **b4.** Restore tests in a temporary folder: deleted rows come back, new rows stay, live edits are kept and reported, and restore backs up first
 2. Auth
    - **a.** Better Auth, with `profile.userId`
    - **b.** `resolveProfile` finds the signed-in user's profile, creating it on first sign-in; drop the single-profile check
