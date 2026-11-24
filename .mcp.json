@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "profile": {
+      "command": "pnpm",
+      "args": ["--silent", "start:mcp"]
+    }
+  }
+}
