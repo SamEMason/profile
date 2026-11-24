@@ -1,5 +1,7 @@
 # Profile
 
+[![CI](https://github.com/SamEMason/profile/actions/workflows/ci.yml/badge.svg)](https://github.com/SamEMason/profile/actions/workflows/ci.yml)
+
 **A structured, persistent source of truth for a person's experiences.**
 
 People constantly generate valuable experience through work, learning and projects, but most of it is never captured in a reusable form. Profile turns raw experience into structured data that many applications can use later.
@@ -158,7 +160,6 @@ The tables in `src/db/schema.ts` are the source of truth for the data shape: the
 
 A pre-commit hook lints and formats staged files, then runs the typecheck, the migration check and the unit tests.
 
-> [!IMPORTANT]
-> The hook doesn't run the database tests. Run `pnpm test:db` yourself before committing changes to persistence.
+[CI](.github/workflows/ci.yml) runs all of those checks plus the database tests (`pnpm test:db`) on every push to `main` and every pull request.
 
 The planned work is in the [roadmap](docs/roadmap.md). The original planning docs are in [docs/plan/archive](docs/plan/archive/).
