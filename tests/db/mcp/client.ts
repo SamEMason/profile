@@ -1,6 +1,8 @@
 import { Client, InMemoryTransport } from "@modelcontextprotocol/client";
-import type { Database } from "#src/db/client.js";
+import { afterAll, afterEach, beforeEach, inject } from "vitest";
+import { connectDatabase, type Database } from "#src/db/client.js";
 import { mcpServer } from "#src/mcp/server.js";
+import { resetDatabase } from "#tests/db/reset.js";
 
 /** What `client.callTool` resolves to. */
 type ToolResult = Awaited<ReturnType<Client["callTool"]>>;
@@ -23,6 +25,37 @@ export const connectMcpClient = async (db: Database): Promise<Client> => {
   const client = new Client({ name: "profile-tests", version: "0.1.0" });
   await client.connect(clientTransport);
   return client;
+};
+
+/**
+ * Sets up an MCP test file: connects to the test database, and before each
+ * test empties it and connects a new client, closing everything afterwards.
+ *
+ * Call it once at the top of the file. Read `mcp.client` only inside tests:
+ * it's replaced before each one, so outside a test it's a placeholder.
+ *
+ * @returns `{ db, client }`, e.g. `await mcp.client.callTool({ name: "list_experiences" })`.
+ */
+export const useMcpClient = () => {
+  const mcp = {
+    db: connectDatabase(inject("databaseUrl")),
+    client: undefined as unknown as Client,
+  };
+
+  beforeEach(async () => {
+    await resetDatabase(mcp.db);
+    mcp.client = await connectMcpClient(mcp.db);
+  });
+
+  afterEach(async () => {
+    await mcp.client.close();
+  });
+
+  afterAll(async () => {
+    await mcp.db.$client.end();
+  });
+
+  return mcp;
 };
 
 /**
