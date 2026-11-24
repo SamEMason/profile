@@ -1,11 +1,6 @@
 # Roadmap
 
 1. Capture foundation
-   a. MCP server over the experience services (save, list, get, update, delete)
-      a6. `serveMcp(databaseUrl)`: serve over stdio
-      a7. `scripts/start-mcp.ts` and `pnpm start:mcp`: start Postgres, then serve
-      a8. `.mcp.json`; check that stdout carries only protocol messages and that startup failures are reported clearly on stderr
-      a9. Update `CLAUDE.md` layout and commands; document starting the server, connecting a client and running the MCP tests
    b. Ongoing capture skill
       b1. Propose a record: fill fields from what the user said or the skill observed (repo → project, changed files → skills), mark where each value came from, and ask for the rest
       b2. Check for duplicates: list experiences and compare; on a likely match, say "This may duplicate …" and show both side by side
