@@ -2,7 +2,6 @@
 
 1. Capture foundation
    a. MCP server over the experience services (save, list, get, update, delete)
-      a4. `update_experience` and tests
       a5. `delete_experience`, with a destructive hint, and tests
       a6. `serveMcp(databaseUrl)`: serve over stdio
       a7. `scripts/start-mcp.ts` and `pnpm start:mcp`: start Postgres, then serve

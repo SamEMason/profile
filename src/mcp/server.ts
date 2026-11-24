@@ -1,11 +1,12 @@
 import { McpServer } from "@modelcontextprotocol/server";
 import * as z from "zod";
 import type { Database } from "#src/db/client.js";
-import { NewExperience } from "#src/domain/experience.js";
+import { NewExperience, UpdatedExperience } from "#src/domain/experience.js";
 import {
   getExperience,
   listExperiences,
   saveExperience,
+  updateExperience,
 } from "#src/services/experience.js";
 import { resolveProfile } from "#src/services/profile.js";
 
@@ -31,8 +32,8 @@ const jsonResult = (value: unknown) => ({
  * checks arguments against each tool's `inputSchema` before the tool runs.
  *
  * @param db - The open database connection the tools use.
- * @returns The server, with `save_experience`, `list_experiences` and
- *   `get_experience` registered.
+ * @returns The server, with `save_experience`, `list_experiences`,
+ *   `get_experience` and `update_experience` registered.
  */
 export const mcpServer = (db: Database): McpServer => {
   const server = new McpServer({ name: "profile", version: "0.1.0" });
@@ -80,6 +81,20 @@ export const mcpServer = (db: Database): McpServer => {
       annotations: { readOnlyHint: true },
     },
     async ({ id }) => respond((profileId) => getExperience(db, profileId, id)),
+  );
+
+  server.registerTool(
+    "update_experience",
+    {
+      description:
+        "Change some fields of one of the profile's experiences. Fields left out stay as they are. Only call this after the user has approved the change.",
+      inputSchema: z.strictObject({
+        id: z.string().describe("The experience's id, from list_experiences"),
+        changes: UpdatedExperience,
+      }),
+    },
+    async ({ id, changes }) =>
+      respond((profileId) => updateExperience(db, profileId, id, changes)),
   );
 
   return server;
