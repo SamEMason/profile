@@ -146,9 +146,10 @@ const runApp = (): void => {
       step(
         styleText("gray", "■"),
         "app",
-        "stopped · postgres still running (docker compose down to stop it)",
+        "stopped · postgres still running (pnpm db:down to stop it)",
       ),
     );
+    console.log();
     process.exit(code ?? 0);
   });
 };

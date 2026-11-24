@@ -71,13 +71,14 @@ Remove the aliases once typescript-eslint supports TS 7.1+. The remaining peer w
 
 ## Commands
 
-- `pnpm dev`: start the Postgres container (waiting until it's healthy), then run `src/index.ts` with tsx, restarting on save (no type-checking). `docker compose down` stops the database and keeps its data.
+- `pnpm dev`: start the Postgres container (waiting until it's healthy), then run `src/index.ts` with tsx, restarting on save (no type-checking). Ctrl+C stops the app; Postgres keeps running.
 - `pnpm start:mcp`: start Postgres, then serve MCP over stdio (Claude Code runs this itself).
 - `pnpm db:generate`: generate a SQL migration in `migrations/` from changes to `src/db/schema.ts`
 - `pnpm db:migrate`: apply pending migrations to the database in `DATABASE_URL`
 - `pnpm db:check`: fail if `src/db/schema.ts` has changes without a migration (a dry run; no database needed)
 - `pnpm db:studio`: browse and edit the data in Drizzle Studio (local server on 127.0.0.1:4983, opened at local.drizzle.studio)
 - `pnpm db:psql`: open an interactive psql session in the Postgres container (`\q` to quit)
+- `pnpm db:down`: stop the Postgres container, keeping its data
 - `pnpm test`: run the unit tests once (no Docker needed)
 - `pnpm test:db`: start the throwaway Postgres on port 5433, migrate it, run `tests/db/`, then remove it (needs Colima running)
 - `pnpm typecheck`: type-check everything

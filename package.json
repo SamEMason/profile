@@ -24,6 +24,7 @@
     "db:check": "tsx scripts/check-migrations.ts",
     "db:studio": "drizzle-kit studio --config=config/drizzle.ts",
     "db:psql": "docker compose exec db sh -c 'psql -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\"'",
+    "db:down": "docker compose down",
     "test": "vitest run --config config/vitest.ts",
     "test:db": "vitest run --config config/vitest-db.ts",
     "lint": "eslint",
